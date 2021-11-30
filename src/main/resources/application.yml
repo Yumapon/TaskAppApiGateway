@@ -1,0 +1,23 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: taskapp-api-gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 985494108713-d6c2p24i17tou59sltk3a8df1lm7iicj.apps.googleusercontent.com
+            client-secret: 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
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus, health"
+
+taskapp.destinations:
+    taskapiurl: localhost:8080
+    #nsmonster:
+
