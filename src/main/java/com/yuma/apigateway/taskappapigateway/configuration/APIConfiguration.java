@@ -3,10 +3,11 @@ package com.yuma.apigateway.taskappapigateway.configuration;
 import com.yuma.apigateway.taskappapigateway.Service.CallApiService;
 import com.yuma.apigateway.taskappapigateway.presentation.GetPCUserInfoResponce;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;  
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +29,12 @@ public class APIConfiguration {
         System.out.println("userinfo");
         System.out.println(user);
         String email = user.getEmail();
+
+        System.out.println(user.getSubject());
+        System.out.println(user.getUserInfo());
+        System.out.println("JWT: " + user.getIdToken().getTokenValue());
+
+        
 
         //TODO: 諺取得
 
