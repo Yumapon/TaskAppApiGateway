@@ -3,9 +3,11 @@ package com.yuma.apigateway.taskappapigateway.presentation.vo;
 import java.time.LocalDate;
 
 import lombok.Builder;
+import lombok.Data;
 
 @Builder
-public class Task {
+@Data
+public class Taskdto {
 
     private final String num;//一意キー
     private final String name;//Task名
