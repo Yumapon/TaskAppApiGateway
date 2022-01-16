@@ -23,11 +23,11 @@ management:
       exposure:
         include: "prometheus, health"
 
-opentracing:
-  jaeger:
-    log-spans: false
-    http-sender:
-       url: ${JAEGER_HTTP_URL:http://localhost:14268/api/traces}
+#opentracing:
+#  jaeger:
+#    log-spans: false
+#    http-sender:
+#       url: ${JAEGER_HTTP_URL:http://localhost:14268/api/traces}
 
 api.destinations:
     taskapiurl: 

@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+
 	<dependencies>
 		<!--Spring-->
 		<dependency>
@@ -27,6 +28,11 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+		<dependency><!--X-RAY要件-->
+			<groupId>org.springframework.boot</groupId> 
+			<artifactId>spring-boot-starter-aop</artifactId> 
+			<version>2.5.2</version> 
 		</dependency>
 
 		<!--exporter-->
@@ -56,14 +62,23 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!--x-ray-->
+		<dependency> 
+			<groupId>com.amazonaws</groupId> 
+			<artifactId>aws-xray-recorder-sdk-spring</artifactId> 
+			<version>2.9.0</version> 
+		</dependency>
 
 		<!-- Jaeger Tracing -->
 		<!-- https://mvnrepository.com/artifact/io.opentracing.contrib/opentracing-spring-web-starter -->
+		<!--
 		<dependency>
             <groupId>io.opentracing.contrib</groupId>
             <artifactId>opentracing-spring-jaeger-web-starter</artifactId>
             <version>3.2.0</version>
         </dependency>
+		-->
 
 		<!--test-->
 		<dependency>

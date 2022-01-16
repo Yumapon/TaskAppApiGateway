@@ -1,4 +1,4 @@
-package com.yuma.apigateway.taskappapigateway.configuration;
+package com.yuma.apigateway.taskappapigateway.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/v1.0.0")
-public class APIConfiguration {
+public class APIController {
 
     @Autowired
     CallApiService service;
@@ -71,4 +71,10 @@ public class APIConfiguration {
 
         return getpcInfo;
     }
+
+    @GetMapping(path = "test")
+    public void testMethod(){
+        System.out.print("ok");
+    }
+
 }
