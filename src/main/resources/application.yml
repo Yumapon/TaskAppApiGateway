@@ -8,8 +8,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 985494108713-d6c2p24i17tou59sltk3a8df1lm7iicj.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${CLIENT_ID}
+            client-secret: ${SECRET_KEY}
 
 logging:
     file: 
@@ -31,11 +31,10 @@ management:
 
 api.destinations:
     taskapiurl: 
-      getall: http://localhost:8080/yuma/task/getall
-      get: http://localhost:8080/yuma/task
-      delete: http://localhost:8080/yuma/task
-      change: http://localhost:8080/yuma/task
-      add: http://localhost:8080/yuma/task
+      getall: http://taskapp-read-service:5001/yuma/task/getall
+      get: http://taskapp-read-service:5001/yuma/task
+      delete: http://taskapp-cud-service:5002/yuma/task
+      change: http://taskapp-cud-service:5002/yuma/task
+      add: http://taskapp-cud-service:5002/yuma/task
     dnmonster:
-      get: http://localhost:8082/monster
-
+      get: http://dnmonster-service:6001/monster
