@@ -44,7 +44,6 @@ jobs:
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
-        context: ./
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -54,6 +53,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v2
       with:
+        context: ./
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
