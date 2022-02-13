@@ -20,16 +20,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.AllArgsConstructor;
+import reactor.core.publisher.Flux;
 
 /**
  * 外部API呼び出しを定義するクラス
@@ -40,7 +43,7 @@ public class CallApiService {
 
     //API呼び出し用クラス
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient webClient;
 
     //API情報の定義クラス
     @Autowired
@@ -64,11 +67,12 @@ public class CallApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        //URLの作成
-        String url = apiDestinations.getTaskapiurlGet() + "/" + id; 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("email", email);
+        //URiの作成
+        String uri = apiDestinations.getTaskapiurlGet() + "/" + id; 
+        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("email", email);
 
         //paramの値設定
+        /*
         Map<String, String> params = new HashMap<>();
         params.put("email", email);
 
@@ -80,16 +84,17 @@ public class CallApiService {
                 entity,
                 Task.class
         );
+        */
+        Task task = webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("email", email).build())
+                        .retrieve()
+                        .bodyToMono(Task.class)
+                        .block();
 
-        //statesCodeを判断
-        if(response.getStatusCodeValue() == 200){
-            //取得したtaskを返却
-            return response.getBody();
-        }
-        //TODO 本当はStatusCodeごとにハンドリングすべきだけど、面倒なのでしない
-        else{
-            throw new NoNormalResponseError();
-        }
+
+        logger.info("end call getTaskAPI");
+        
+        return task;
+
     }
 
     /**
@@ -105,13 +110,14 @@ public class CallApiService {
         logger.info("start call getallTask API");
 
         //Headerの設定
-        HttpHeaders headers = new HttpHeaders();
+        //HttpHeaders headers = new HttpHeaders();
         //headers.setContentType(MediaType.APPLICATION_JSON);
 
         //URLの作成
-        String url = apiDestinations.getTaskapiurlGetall(); 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("email", email);
+        String uri = apiDestinations.getTaskapiurlGetall(); 
+        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("email", email);
 
+        /*
         //paramの値設定
         Map<String, String> params = new HashMap<>();
         params.put("email", email);
@@ -124,17 +130,18 @@ public class CallApiService {
                 entity,
                 GetTaskAllResDto.class
         );
+        */
 
-        //statesCodeを判断
-        if(response.getStatusCodeValue() == 200){
-            //取得したtaskを返却
-            //return Arrays.asList(response.getBody());
-            return response.getBody().getTaskList();
-        }
-        //TODO 本当はStatusCodeごとにハンドリングすべきだけど、面倒なのでしない
-        else{
-            throw new NoNormalResponseError();
-        }
+        List<Task> tasks = webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("email", email).build())
+                        .retrieve()
+                        .bodyToFlux(Task.class)
+                        .collectList()
+                        .block();
+
+
+        logger.info("end call getTaskAPI");
+        
+        return tasks;
 
     }
 
@@ -153,13 +160,14 @@ public class CallApiService {
         logger.info("start call dnmonster api");
 
         //Headerの設定
-        HttpHeaders headers = new HttpHeaders();
+        //HttpHeaders headers = new HttpHeaders();
 
         //URLの作成
-        String url = apiDestinations.getDnmonsterGet() + "/" + email; 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("size", size);
+        String uri = apiDestinations.getDnmonsterGet() + "/" + email; 
+        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("size", size);
 
         //paramの値設定
+        /*
         Map<String, String> params = new HashMap<>();
         params.put("size", String.valueOf(size));
 
@@ -171,26 +179,20 @@ public class CallApiService {
                 entity,
                 byte[].class
         );
+        */
 
-        //statesCodeを判断
-        if(response.getStatusCodeValue() == 200){
-            //debug用
-            //byte[] identidock = Base64.getEncoder().encode(response.getBody());
-            //byte[] data = Base64.getDecoder().decode(identidock);
-            /*
-            try (OutputStream stream = new FileOutputStream("logs/test.png")) {
-                stream.write(data);
-            }
-            //取得したidentidockをBase64エンコード
-            return identidock;
-            */
-            return Base64.getEncoder().encode(response.getBody());
-        }
-        //TODO 本当はStatusCodeごとにハンドリングすべきだけど、面倒なのでしない
-        else{
-            throw new NoNormalResponseError();
-        }   
+        byte[] image = DataBufferUtils.join(webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("size", size).build())
+                        .retrieve()
+                        .bodyToFlux(DataBuffer.class))
+                        .map(dataBuffer -> {
+                            byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                            dataBuffer.read(bytes);
+                            DataBufferUtils.release(dataBuffer);
+                            return bytes;
+                        })
+                        .block();
 
+        return image;
     }
     
 }
