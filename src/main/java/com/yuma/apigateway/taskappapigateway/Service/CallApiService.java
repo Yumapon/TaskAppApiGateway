@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.yuma.apigateway.taskappapigateway.Service.dto.GetTaskAllResDto;
 import com.yuma.apigateway.taskappapigateway.Service.dto.Task;
 import com.yuma.apigateway.taskappapigateway.error.NoNormalResponseError;
@@ -39,6 +40,7 @@ import reactor.core.publisher.Flux;
  */
 @Service
 @AllArgsConstructor
+@XRayEnabled
 public class CallApiService {
 
     //API呼び出し用クラス
