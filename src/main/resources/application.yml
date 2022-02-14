@@ -16,6 +16,7 @@ logging:
       name: logs/apigateway.log
     level:
         org.springframework.web: INFO
+        com.amazonaws.xray: INFO
 
 management:
   endpoints:

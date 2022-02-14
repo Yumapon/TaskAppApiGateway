@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.yuma.apigateway.taskappapigateway.Service.dto.GetTaskAllResDto;
 import com.yuma.apigateway.taskappapigateway.Service.dto.Task;
 import com.yuma.apigateway.taskappapigateway.error.NoNormalResponseError;
@@ -40,7 +39,6 @@ import reactor.core.publisher.Flux;
  */
 @Service
 @AllArgsConstructor
-@XRayEnabled
 public class CallApiService {
 
     //API呼び出し用クラス
@@ -71,22 +69,7 @@ public class CallApiService {
 
         //URiの作成
         String uri = apiDestinations.getTaskapiurlGet() + "/" + id; 
-        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri).queryParam("email", email);
-
-        //paramの値設定
-        /*
-        Map<String, String> params = new HashMap<>();
-        params.put("email", email);
-
-        //Requestの実施
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<Task> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                Task.class
-        );
-        */
+ 
         Task task = webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("email", email).build())
                         .retrieve()
                         .bodyToMono(Task.class)
@@ -117,22 +100,6 @@ public class CallApiService {
 
         //URLの作成
         String uri = apiDestinations.getTaskapiurlGetall(); 
-        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("email", email);
-
-        /*
-        //paramの値設定
-        Map<String, String> params = new HashMap<>();
-        params.put("email", email);
-
-        //Requestの実施
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<GetTaskAllResDto> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                GetTaskAllResDto.class
-        );
-        */
 
         List<Task> tasks = webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("email", email).build())
                         .retrieve()
@@ -166,22 +133,6 @@ public class CallApiService {
 
         //URLの作成
         String uri = apiDestinations.getDnmonsterGet() + "/" + email; 
-        //UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("size", size);
-
-        //paramの値設定
-        /*
-        Map<String, String> params = new HashMap<>();
-        params.put("size", String.valueOf(size));
-
-        //Requestの実施
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-        ResponseEntity<byte[]> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                byte[].class
-        );
-        */
 
         byte[] image = DataBufferUtils.join(webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("size", size).build())
                         .retrieve()
