@@ -13,7 +13,7 @@ spring:
 
 logging:
     file: 
-      name: logs/apigateway.log
+      name: /apigw/logs/apigateway.log
     level:
         org.springframework.web: INFO
         com.amazonaws.xray: INFO
