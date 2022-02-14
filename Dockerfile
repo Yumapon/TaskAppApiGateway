@@ -6,5 +6,6 @@ RUN groupadd apigw && useradd -g apigw -m apigw
 USER apigw
 
 COPY ./target/taskappapigateway-0.0.1-SNAPSHOT.jar /apigw/apigateway.jar
+RUN mkdir /apigw/logs
 
 CMD [ "sh", "-c", "java $JAVA_OPTIONS -jar /apigw/apigateway.jar" ] 
