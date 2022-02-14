@@ -52,7 +52,7 @@ public class WebConfig {
   public WebClient userWebClient(){
       return WebClient.builder()
               .baseUrl("")
-              .filter(exchangeFilterFunction())
+              //.filter(exchangeFilterFunction())
               .build();
   }
 
