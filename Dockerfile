@@ -6,9 +6,7 @@ RUN groupadd apigw && useradd -g apigw -m apigw
 #log出力先ディレクトリを作成
 #logファイルを作成
 #userにlogファイルの権限を渡す
-RUN mkdir /apigw/logs && \
-    touch /apigw/logs/apigateway.log && \
-    chown apigw /apigw/logs/apigateway.log
+RUN mkdir /apigw/logs && touch /apigw/logs/apigateway.log && chown apigw /apigw/logs/apigateway.log
 
 USER apigw
 
