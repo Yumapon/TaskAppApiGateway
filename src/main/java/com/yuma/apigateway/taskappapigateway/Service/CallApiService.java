@@ -7,22 +7,32 @@ import java.io.OutputStream;
 */
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yuma.apigateway.taskappapigateway.Service.dto.GetTaskAllResDto;
 import com.yuma.apigateway.taskappapigateway.Service.dto.Task;
 import com.yuma.apigateway.taskappapigateway.error.NoNormalResponseError;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -94,19 +104,52 @@ public class CallApiService {
         
         logger.info("start call getallTask API");
 
-        //Headerの設定
-        //HttpHeaders headers = new HttpHeaders();
-        //headers.setContentType(MediaType.APPLICATION_JSON);
+        try(CloseableHttpClient httpClient = HttpClientBuilder.create().build(); ){
 
-        //URLの作成
-        String uri = apiDestinations.getTaskapiurlGetall(); 
+            //URIの作成
+            URI uri = new URIBuilder(apiDestinations.getTaskapiurlGetall())
+                        .addParameter("email", email)
+                        .build(); 
+            
+            //HTTPリクエストの設定
+            //一応タイムアウト設定を実装
+            RequestConfig config = RequestConfig.custom()
+                                                .setSocketTimeout(3000)
+                                                .setConnectTimeout(3000)
+                                                .build();
 
-        List<Task> tasks = webClient.get().uri(uriBuilder -> uriBuilder.path(uri).queryParam("email", email).build())
+            // HTTPのGETリクエストを構築
+            HttpGet httpGet = new HttpGet(uri);
+            httpGet.setConfig(config);
+
+            //HTTPリクエストを実行する。HTTPステータスが200の場合のみOKとする
+            try( CloseableHttpResponse response = httpClient.execute(httpGet); ){
+
+                if( response.getStatusLine().getStatusCode() == HttpStatus.SC_OK ) {
+                    HttpEntity entity = response.getEntity();
+                    InputStream inputStream = entity.getContent();
+                    ObjectMapper mapper = new ObjectMapper();
+                    //Task tasks = mapper.readValues(inputStream, Task.class);
+
+                    //Debug用
+                    System.out.println("##########Debug#########");
+                    System.out.println(entity);
+                }
+                else {
+
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        List<Task> tasks = webClient.get().uri(uriBuilder -> uriBuilder.path(apiDestinations.getTaskapiurlGetall()).queryParam("email", email).build())
                         .retrieve()
                         .bodyToFlux(Task.class)
                         .collectList()
                         .block();
-
 
         logger.info("end call getTaskAPI");
         

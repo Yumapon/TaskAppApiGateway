@@ -5,7 +5,7 @@
         "description": "Player moves.",
         "host": "*",
         "http_method": "*",
-        "url_path": "/api/test/*",
+        "url_path": "/api/*",
         "fixed_target": 0,
         "rate": 0.05
       }
