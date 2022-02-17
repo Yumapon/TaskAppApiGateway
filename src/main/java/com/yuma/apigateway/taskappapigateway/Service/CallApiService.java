@@ -7,6 +7,7 @@ import java.io.OutputStream;
 */
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
@@ -40,7 +41,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class CallApiService {
-    
+
     //API情報の定義クラス
     @Autowired
     private APIDestinations apiDestinations;
@@ -226,11 +227,9 @@ public class CallApiService {
 
                 if( response.getStatusLine().getStatusCode() == HttpStatus.SC_OK ) {
                     HttpEntity entity = response.getEntity();
-                    String resStr = EntityUtils.toString(entity);
-                    
-                    ObjectMapper mapper = new ObjectMapper();
+                    InputStream inputStream = entity.getContent();
 
-                    identidock = mapper.readValue(resStr, byte[].class);
+                    identidock = inputStream.readAllBytes();
                 }
                 else {
                     logger.error("Status Codeが200以外で帰ってきました");
