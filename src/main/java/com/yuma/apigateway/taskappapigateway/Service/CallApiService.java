@@ -108,7 +108,7 @@ public class CallApiService {
         logger.info("start call getallTask API");
 
         //返すタスク一覧
-        List<Task> tasks = null;
+        GetTaskAllResDto tasks = null;
 
         try(CloseableHttpClient httpClient = HttpClientBuilder.create().build(); ){
 
@@ -137,7 +137,7 @@ public class CallApiService {
                     
                     ObjectMapper mapper = new ObjectMapper();
 
-                    tasks = mapper.readValue(resStr, new TypeReference<List<Task>>() {});
+                    tasks = mapper.readValue(resStr, GetTaskAllResDto.class);
 
                     //Debug用
                     System.out.println("##########Debug#########");
@@ -150,7 +150,7 @@ public class CallApiService {
                     System.out.println(tasks);
                 }
                 else {
-                    
+
                 }
             } catch(Exception e) {
                 e.printStackTrace();
@@ -161,7 +161,7 @@ public class CallApiService {
 
         logger.info("end call getTaskAPI");
         
-        return tasks;
+        return tasks.getTaskList();
 
     }
 
