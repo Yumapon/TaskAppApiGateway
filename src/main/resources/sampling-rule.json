@@ -6,8 +6,8 @@
         "host": "*",
         "http_method": "*",
         "url_path": "/api/*",
-        "fixed_target": 0,
-        "rate": 0.05
+        "fixed_target": 1,
+        "rate": 1.0
       }
     ],
     "default": {
