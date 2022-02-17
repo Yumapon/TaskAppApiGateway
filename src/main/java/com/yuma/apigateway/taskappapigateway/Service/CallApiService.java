@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yuma.apigateway.taskappapigateway.Service.dto.GetTaskAllResDto;
 import com.yuma.apigateway.taskappapigateway.Service.dto.Task;
@@ -104,6 +105,9 @@ public class CallApiService {
         
         logger.info("start call getallTask API");
 
+        //返すタスク一覧
+        List<Task> tasks = null;
+
         try(CloseableHttpClient httpClient = HttpClientBuilder.create().build(); ){
 
             //URIの作成
@@ -129,11 +133,18 @@ public class CallApiService {
                     HttpEntity entity = response.getEntity();
                     InputStream inputStream = entity.getContent();
                     ObjectMapper mapper = new ObjectMapper();
-                    //Task tasks = mapper.readValues(inputStream, Task.class);
+
+                    tasks = mapper.readValue(inputStream, new TypeReference<List<Task>>() {});
 
                     //Debug用
                     System.out.println("##########Debug#########");
                     System.out.println(entity);
+                    //Debug用
+                    System.out.println("##########Debug2#########");
+                    System.out.println(inputStream);
+                    //Debug用
+                    System.out.println("##########Debug3#########");
+                    System.out.println(tasks);
                 }
                 else {
 
@@ -144,12 +155,6 @@ public class CallApiService {
         } catch(Exception e) {
             e.printStackTrace();
         }
-
-        List<Task> tasks = webClient.get().uri(uriBuilder -> uriBuilder.path(apiDestinations.getTaskapiurlGetall()).queryParam("email", email).build())
-                        .retrieve()
-                        .bodyToFlux(Task.class)
-                        .collectList()
-                        .block();
 
         logger.info("end call getTaskAPI");
         
