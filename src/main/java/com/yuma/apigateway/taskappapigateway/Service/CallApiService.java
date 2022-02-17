@@ -17,6 +17,7 @@ import java.util.Map;
 import com.amazonaws.xray.proxies.apache.http.HttpClientBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.yuma.apigateway.taskappapigateway.Service.dto.GetTaskAllResDto;
 import com.yuma.apigateway.taskappapigateway.Service.dto.Task;
 import com.yuma.apigateway.taskappapigateway.error.NoNormalResponseError;
@@ -28,6 +29,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,23 +133,24 @@ public class CallApiService {
 
                 if( response.getStatusLine().getStatusCode() == HttpStatus.SC_OK ) {
                     HttpEntity entity = response.getEntity();
-                    InputStream inputStream = entity.getContent();
+                    String resStr = EntityUtils.toString(entity);
+                    
                     ObjectMapper mapper = new ObjectMapper();
 
-                    tasks = mapper.readValue(inputStream, new TypeReference<List<Task>>() {});
+                    tasks = mapper.readValue(resStr, new TypeReference<List<Task>>() {});
 
                     //Debug用
                     System.out.println("##########Debug#########");
                     System.out.println(entity);
                     //Debug用
                     System.out.println("##########Debug2#########");
-                    System.out.println(inputStream);
+                    System.out.println(resStr);
                     //Debug用
                     System.out.println("##########Debug3#########");
                     System.out.println(tasks);
                 }
                 else {
-
+                    
                 }
             } catch(Exception e) {
                 e.printStackTrace();
